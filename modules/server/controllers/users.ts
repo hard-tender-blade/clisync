@@ -1,5 +1,6 @@
 import { User } from '@/modules/shared/types/mainTypes'
 import db from './sequelize/squelize'
+import { Op } from 'sequelize'
 
 interface UserCreate {
     id: string
@@ -49,10 +50,27 @@ const update = async (id: string, data: User): Promise<User | null> => {
     return getById(id)
 }
 
+const getUsersBySearch = async (search: string): Promise<User[] | null> => {
+    const where = search ? {
+        city: {
+            [Op.iLike]: `%${search.replaceAll(' ', '').toLocaleLowerCase()}%`,
+        },
+        isPubliclyListed: true,
+    } : {
+        isPubliclyListed: true,
+    }
+
+    const allUsers = await db.users.findAll({ where })
+    if (!allUsers) return null
+
+    return allUsers.map((user) => user.dataValues)
+}
+
 const usersController = {
     create,
     getById,
     getByEmail,
     update,
+    getUsersBySearch,
 }
 export default usersController

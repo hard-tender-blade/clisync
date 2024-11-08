@@ -24,13 +24,14 @@ const signIn: {
         submit: 'Submit',
         createNewAcc: 'Create new account',
         or: 'or',
-        sessionExpired: "Your session expired due to security measures. Thank you for your understanding!",
+        sessionExpired:
+            'Your session expired due to security measures. Thank you for your understanding!',
         errors: {
             failedToSignIn: 'Invalid credentials',
             invalidEmail: 'Invalid email',
             weekPassword:
                 'Password should contain at least 8 characters, 1 lowercase, 1 uppercase, 1 number and 1 symbol',
-        }
+        },
     },
     cs: {
         title: 'Přihlášení',
@@ -39,7 +40,8 @@ const signIn: {
         submit: 'Přihlásit se',
         createNewAcc: 'Vytvořit nový účet',
         or: 'nebo',
-        sessionExpired: "Vaše relace vypršela kvůli bezpečnostním opatřením. Děkujeme za pochopení!",
+        sessionExpired:
+            'Vaše relace vypršela kvůli bezpečnostním opatřením. Děkujeme za pochopení!',
         errors: {
             failedToSignIn: 'Neplatné přihlašovací údaje',
             invalidEmail: 'Neplatný email',

@@ -23,6 +23,10 @@ export interface User {
     phoneNumber?: string
     status?: string
     website?: string
+    isPubliclyListed: boolean
+    premiumPlanTo: Date | string | null
+    twoFAEnabled: boolean
+    twoFASecret: string | null
 }
 
 export interface Client {

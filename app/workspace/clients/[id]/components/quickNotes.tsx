@@ -47,7 +47,7 @@ export default function QuickNotes({
     }
 
     return (
-        <div className="w-full">
+        <div className="w-full max-w-xs pt-2">
             <div className="flex items-center justify-between">
                 <div className="label">
                     <span className="label-text">Quick notes</span>

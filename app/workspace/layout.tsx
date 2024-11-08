@@ -1,16 +1,19 @@
-import { cookies } from 'next/headers'
+'use client'
+
+import { QueryClientProvider } from '@tanstack/react-query'
+import WorkspaceSidebar from './components/sidebar/WorkspaceSidebar'
+import { queryClient } from '@/modules/client/queryClient'
 
 export default function WorkspaceThemeLayout({
     children,
 }: Readonly<{
     children: React.ReactNode
 }>) {
-    let theme = cookies().get('theme')?.value
-    if (theme !== 'light' && theme !== 'dark') theme = 'light'
-
     return (
-        <div id="theme" data-theme={theme}>
-            {children}
+        <div id="theme" data-theme={'light'}>
+            <QueryClientProvider client={queryClient}>
+                <WorkspaceSidebar>{children}</WorkspaceSidebar>
+            </QueryClientProvider>
         </div>
     )
 }

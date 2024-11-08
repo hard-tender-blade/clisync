@@ -107,10 +107,10 @@ export default function ClientAttachments({
     }
 
     return (
-        <div>
+        <div className="px-2">
             <AttachmentModal data={attachmentModal} />
             <div className="flex flex-wrap items-center gap-3">
-                <h2>Attachments</h2>
+                <span className="text-xl">Attachments</span>
                 <button className="btn btn-sm" onClick={handleAddAttachmentBtnClick}>
                     +
                 </button>

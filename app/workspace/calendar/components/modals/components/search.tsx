@@ -1,5 +1,5 @@
 'use client'
-import getClients from '@/modules/client/query/clients/getClients'
+import { getClients } from '@/modules/client/query/clients/useClients'
 import Avatar from '@/modules/client/utils/avatar'
 import { Client } from '@/modules/shared/types/mainTypes'
 import React, { useRef, useState } from 'react'
@@ -37,7 +37,7 @@ export default function Search({ setClient }: { setClient: (client: Client) => v
                 if (!clientsCursored) return
                 handleSetArtists(clientsCursored.data)
             } catch (error) {
-                console.error('Failed to fetch artists', error)
+                console.error('Failed to fetch clients', error)
             }
         }, 700)
 
@@ -89,7 +89,7 @@ export default function Search({ setClient }: { setClient: (client: Client) => v
                                         handleDefocus()
                                     }}
                                 >
-                                    <Avatar id={client.id} s={16} />
+                                    <Avatar id={client.id} size={16} />
                                     <span>{client.name}</span>
                                 </button>
                             </div>

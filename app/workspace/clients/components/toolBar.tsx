@@ -1,31 +1,25 @@
 'use client'
 import PC from '@/app/components/pc'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import React, { useState, useEffect } from 'react'
 import { IoPersonAddSharp, IoSearch } from 'react-icons/io5'
+import { useClientsList } from '../context/clientsListContext'
 
-export default function ToolBar({ lang }: { lang: string }) {
-    const [typing, setTyping] = useState(false)
+export default function ToolBar() {
     const [timer, setTimer] = useState<NodeJS.Timeout | null>(null)
     const [value, setValue] = useState('') // State to store the input value
-    const router = useRouter()
 
+    const { setSearchString, clients, loading } = useClientsList()
+
+    // this is bouncing search input, it will wait for 0.3s after user stops typing
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = event.target.value
         setValue(newValue) // Update the value state with the input text
 
         if (timer) clearTimeout(timer)
-
-        setTyping(true)
-        const newTimer = setTimeout(() => {
-            if (newValue.replaceAll(' ', '').length === 0) {
-                router.replace('/workspace/clients')
-            }
-            router.replace(`/workspace/clients?search=${newValue}`)
-
-            setTyping(false)
-        }, 1000)
+        const newTimer = setTimeout(async () => {
+            setSearchString(newValue)
+        }, 300)
         setTimer(newTimer)
     }
 
@@ -38,12 +32,14 @@ export default function ToolBar({ lang }: { lang: string }) {
     }, [timer])
 
     return (
-        <div className="flex flex-col justify-between md:flex-row md:items-center">
-            <PC></PC>
-            <h1>Clients</h1>
+        <div className=" z-30 flex items-center gap-3 border-b border-solid border-base-200 bg-white p-2">
             <div className="flex gap-3">
                 <label className="input input-bordered flex w-full items-center gap-2">
-                    <IoSearch className="h-5 w-5 opacity-40" />
+                    {clients.status === 'pending' || loading ? (
+                        <span className="loading loading-dots h-5 w-5 opacity-40"></span>
+                    ) : (
+                        <IoSearch className="h-5 w-5 opacity-40" />
+                    )}
                     <input
                         className="w-full md:w-auto"
                         placeholder="Search for a client..."

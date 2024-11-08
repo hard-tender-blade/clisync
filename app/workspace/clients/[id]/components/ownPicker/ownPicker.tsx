@@ -32,7 +32,7 @@ export default function OwnPicker({
                 <summary className="btn btn-sm">{date.toLocaleString()}</summary>
             </NoSSR>
             <div className="menu dropdown-content z-[1]">
-                <div className=" flex w-80 flex-col gap-4 rounded-xl bg-base-100 p-4 shadow-custom">
+                <div className=" flex flex-col gap-4 rounded-xl bg-base-100 p-4 shadow-custom">
                     {/* Month view */}
                     <div className={showMonth === false ? 'hidden' : 'flex'}>
                         <div className="flex items-center justify-between">

@@ -1,34 +1,46 @@
 import publicConfig from '@/modules/shared/config/publicConfig'
 import { SessionWithClient } from '@/modules/shared/types/mainTypes'
+import CryptoManager from '../../utils/cryptoManager'
 
+//todo use axios
 const getSessionsOfTimeInterval = async (
     {
         start,
         end,
-        token,
+        cm,
     }: {
         start: string,
         end: string,
-        token?: string,
+        cm: CryptoManager
     }
-): Promise<SessionWithClient[] | null> => {
+): Promise<SessionWithClient[]> => {
+    console.log("start", start)
+
     const searchParams = new URLSearchParams()
     searchParams.append('start', start)
     searchParams.append('end', end)
     searchParams.append('clients', "true")
 
+
     const response = await fetch(
         `${publicConfig.next_public_origin}/api/sessions?${searchParams.toString()}`,
         {
             method: 'GET',
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
         },
     )
+    const sessions = await response.json() as SessionWithClient[]
+    if (!sessions) return []
 
-    if (response.status !== 200) return null
+    try {
+        // Decrypt notes
+        for (const session of sessions) {
 
-    return response.json()
+            session.note = await cm.decryptData(session.note)
+        }
+    } catch (error) {
+        console.error('Failed to decrypt notes', error)
+    }
+
+    return sessions
 }
 export default getSessionsOfTimeInterval

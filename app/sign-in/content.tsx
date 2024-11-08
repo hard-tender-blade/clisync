@@ -20,6 +20,10 @@ import { IoMdFlower } from 'react-icons/io'
 const Element = ({ lang }: { lang: Language }) => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+
+    const [show2FAInput, setShow2FAInput] = useState(false)
+    const [twoFACode, setTwoFACode] = useState('')
+
     const router = useRouter()
     const searchParams = useSearchParams()
 
@@ -36,12 +40,26 @@ const Element = ({ lang }: { lang: Language }) => {
         }
 
         showLoading()
-        const ok = await singInWithEmail({ email, password })
-        if (!ok) {
+        const res = await singInWithEmail(
+            twoFACode === '' ? { email, password } : { email, password, twoFACode },
+        )
+        if (!res.ok) {
             showAlert('error', 'short', 'Invalid credentials')
             setEmail('')
             setPassword('')
             hideLoading()
+            return
+        }
+
+        const data = await res.json()
+
+        // check if 2FA is enabled
+        if (data.twoFARequired) {
+            const el = document.getElementById('2fa-container')
+            setShow2FAInput(true)
+            hideLoading()
+            el.classList.remove('hidden')
+            el.focus()
             return
         }
 
@@ -89,10 +107,13 @@ const Element = ({ lang }: { lang: Language }) => {
                     {searchParams.get('sessionExpired') ? (
                         <div>
                             <Separator size="md" />
-                            <a className="btn btn-ghost ml-1 flex justify-center rounded-full text-xl">
+                            <Link
+                                href="/"
+                                className="btn btn-ghost ml-1 flex justify-center rounded-full text-xl"
+                            >
                                 <IoMdFlower />
                                 CliSync
-                            </a>
+                            </Link>
                             <div role="alert" className="alert flex text-left">
                                 <FaShieldHeart className="h-10 w-10" />
                                 <span className="text-xs">{LI.sessionExpired}</span>
@@ -102,10 +123,13 @@ const Element = ({ lang }: { lang: Language }) => {
                     ) : (
                         <>
                             <Separator size="sm" />
-                            <a className="btn btn-ghost ml-1 flex justify-center rounded-full text-xl">
+                            <Link
+                                href="/"
+                                className="btn btn-ghost ml-1 flex justify-center rounded-full text-xl"
+                            >
                                 <IoMdFlower />
                                 CliSync
-                            </a>
+                            </Link>
                             <Separator size="sm" />
                         </>
                     )}
@@ -151,6 +175,21 @@ const Element = ({ lang }: { lang: Language }) => {
                             autoComplete="current-password"
                         />
                     </label>
+
+                    <label id="2fa-container" className="form-control hidden w-full">
+                        <div className="label">
+                            <span className="label-text">2FA</span>
+                        </div>
+                        <input
+                            type="number"
+                            placeholder={'xxx - xxx'}
+                            value={twoFACode}
+                            onChange={(e) => setTwoFACode(e.target.value)}
+                            className="input input-bordered w-full"
+                            id="2fa-input"
+                        />
+                    </label>
+
                     <button className="btn btn-primary mt-8" onClick={handleSubmit}>
                         {LI.submit}
                     </button>

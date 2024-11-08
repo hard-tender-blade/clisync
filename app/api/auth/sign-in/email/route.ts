@@ -9,6 +9,7 @@ import responses from '@/modules/server/constants/responses'
 import { validateEmail, validatePassword } from '@/modules/shared/validation/validation'
 import setAccessTokenToCookies from '../../utils/setAccessTokenToCookies'
 import generateAuthJwtToken from '../../utils/generateAuthJwtToken'
+import speakeasy from 'speakeasy'
 
 //todo make controller for all auth routes
 export async function POST(req: Request) {
@@ -33,8 +34,29 @@ export async function POST(req: Request) {
         const user = await usersController.getById(password.userId)
         if (!user) return responses.errors.notFound
 
-        const token = generateAuthJwtToken(user.id, user.lang)
-        setAccessTokenToCookies(token)
-        return responses.success({ token })
+
+        if (user.twoFAEnabled && !signInWithEmailRequest.twoFACode) {
+            return responses.success({
+                twoFARequired: true,
+            })
+        } else if (user.twoFAEnabled && signInWithEmailRequest.twoFACode) {
+            // Verify the provided token
+            const isVerified = speakeasy.totp.verify({
+                secret: user.twoFASecret,
+                encoding: 'base32',
+                token: signInWithEmailRequest.twoFACode
+            });
+
+            if (!isVerified) return responses.errors.unauthorized
+
+            const token = generateAuthJwtToken(user.id, user.lang)
+            setAccessTokenToCookies(token)
+            return responses.success({ token })
+        }
+        else {
+            const token = generateAuthJwtToken(user.id, user.lang)
+            setAccessTokenToCookies(token)
+            return responses.success({ token })
+        }
     })
 }

@@ -1,16 +1,14 @@
-import { MONTH_CALENDAR_DAYS_INTERVAL } from "@/modules/shared/constants/constants";
 import { Day, GoogleCalendarEvent } from "@/modules/shared/types/calendar";
 import { SessionWithClient } from "@/modules/shared/types/mainTypes";
 import moment from "moment";
 
-const buildMonthDays = (startS: string, endS: string, sessions: SessionWithClient[], userGoogleCalendarEvents: GoogleCalendarEvent[]): Day[] => {
-    const currentTime = moment()
-    const start = moment(startS)
-    const end = moment(endS)
-
+const buildMonthDays = ({ start, end, sessions, userGoogleCalendarEvents }: {
+    start: moment.Moment,
+    end: moment.Moment,
+    sessions: SessionWithClient[],
+    userGoogleCalendarEvents: GoogleCalendarEvent[]
+}): Day[] => {
     const days = []
-
-    const monthMiddleValue = start.clone().add(Math.floor(MONTH_CALENDAR_DAYS_INTERVAL / 2), 'days')
 
     // delete from googleCalendar actual sessions, we dont want to show them twice
     const googleEventsToRemove = sessions.map((session) => {
@@ -20,20 +18,17 @@ const buildMonthDays = (startS: string, endS: string, sessions: SessionWithClien
         return !googleEventsToRemove.includes(event.id)
     })
 
-
-    // map days 
-    for (let i = 0; i < MONTH_CALENDAR_DAYS_INTERVAL; i++) {
-        const processDay = start.clone().add(i, 'days')
-
+    // map data into days
+    while (start.isBefore(end)) {
         const processDaySessions: SessionWithClient[] = sessions.filter((session) => {
-            return moment(session.start).isSame(processDay, 'day')
+            return moment(session.start).isSame(start, 'day')
         })
         sessions = sessions.filter((session) => {
             return !processDaySessions.includes(session)
         })
 
         const processDayGoogleCalendarEvents: GoogleCalendarEvent[] = userGoogleCalendarEvents.filter((event) => {
-            return moment(event.start.dateTime).isSame(processDay, 'day')
+            return moment(event.start.dateTime).isSame(start, 'day')
         }
         )
         userGoogleCalendarEvents = userGoogleCalendarEvents.filter((event) => {
@@ -41,13 +36,12 @@ const buildMonthDays = (startS: string, endS: string, sessions: SessionWithClien
         })
 
         days.push({
-            date: processDay,
-            weekday: processDay.format('dddd'),
-            currentMonth: processDay.month() === monthMiddleValue.month(),
-            today: processDay.isSame(currentTime, 'day'),
+            date: start.clone(),
             sessions: processDaySessions,
             googleCalendarEvents: processDayGoogleCalendarEvents,
         })
+
+        start.add(1, 'days')
     }
 
     return days

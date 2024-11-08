@@ -18,6 +18,7 @@ export interface SignUpWithGoogleRequest {
 export interface SignInWithEmailRequest {
     email: string
     password: string
+    twoFACode?: string
 }
 
 export interface SignInWithGoogleRequest {

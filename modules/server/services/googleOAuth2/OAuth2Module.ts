@@ -31,7 +31,12 @@ const generateNewAccessToken = async (refresh_token: string): Promise<string | n
         }),
     })
 
-    if (!res.ok) return null;
+    if (!res.ok) {
+        console.error('Failed to generate new access token', res);
+        const a = await res.json()
+        console.error(a)
+        return null;
+    };
     const data = await res.json();
     return data.access_token;
 }

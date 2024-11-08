@@ -14,6 +14,7 @@ class Config {
     public readonly next_public_google_client_id: string;
     public readonly google_secret: string
     public readonly resend_email_api_key: string
+    public readonly stripe_secret_key: string
 
 
     // Constructor
@@ -32,6 +33,7 @@ class Config {
         const next_public_google_client_id = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
         const google_secret = process.env.GOOGLE_SECRET
         const resend_email_api_key = process.env.RESEND_EMAIL_API_KEY
+        const stripe_secret_key = process.env.STRIPE_SECRET_KEY
 
         if (
             !db_connection_string ||
@@ -46,7 +48,8 @@ class Config {
             !s3_secret_access_key ||
             !next_public_google_client_id ||
             !google_secret ||
-            !resend_email_api_key
+            !resend_email_api_key ||
+            !stripe_secret_key
         ) {
             throw new Error('Environment variables not set');
         }
@@ -65,6 +68,7 @@ class Config {
         this.next_public_google_client_id = next_public_google_client_id
         this.google_secret = google_secret
         this.resend_email_api_key = resend_email_api_key
+        this.stripe_secret_key = stripe_secret_key
     }
 }
 

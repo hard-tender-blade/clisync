@@ -13,8 +13,8 @@ export default function Sessions({
     setClient: (client: Client) => void
 }) {
     return (
-        <div className=" flex flex-col gap-12">
-            <h2>Sessions</h2>
+        <div className=" flex flex-col gap-12 px-2">
+            <span className="text-xl">Sessions</span>
             <Link href={'/workspace/calendar/month'} className="btn btn-primary w-fit">
                 <FaRegCalendarAlt />
                 Create session in calendar

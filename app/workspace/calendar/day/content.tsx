@@ -2,7 +2,7 @@
 import React from 'react'
 import moment from 'moment'
 import { Language } from '@/modules/client/languageInterface/language'
-import MenuBar from '../components/menuBar'
+import ToolBar from '../month/components/toolBar'
 import { FaAngleLeft, FaAngleRight } from 'react-icons/fa6'
 import Link from 'next/link'
 import { Day, GoogleCalendarEvent } from '@/modules/shared/types/calendar'
@@ -61,7 +61,7 @@ export default function Content({
 
     return (
         <div className=" h-[85vh] px-24">
-            <MenuBar viewType={'day'}>
+            <toolBar viewType={'day'}>
                 <div className="join">
                     <Link href={prevDayUrl()} className="btn join-item btn-sm">
                         <FaAngleLeft />
@@ -73,7 +73,7 @@ export default function Content({
                 <Link href={currentDayUrl()} className="btn join-item btn-sm">
                     Today
                 </Link>
-            </MenuBar>
+            </toolBar>
 
             <DaySessionView day={day} user={user} sessionDefault={sessionDefault} />
         </div>

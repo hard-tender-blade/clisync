@@ -1,6 +1,6 @@
 'use client'
 import React from 'react'
-import MenuBar from '../components/menuBar'
+import ToolBar from '../month/components/toolBar'
 import { FaAngleLeft, FaAngleRight } from 'react-icons/fa6'
 import Link from 'next/link'
 import { Day, GoogleCalendarEvent } from '@/modules/shared/types/calendar'
@@ -57,7 +57,7 @@ export default function Content({
 
     return (
         <div className=" h-[85vh] px-24">
-            <MenuBar viewType={'week'}>
+            <toolBar viewType={'week'}>
                 <div className="join">
                     <Link href={prevWeekUrl()} className="btn join-item btn-sm">
                         <FaAngleLeft />
@@ -69,7 +69,7 @@ export default function Content({
                 <Link href={currentWeekUrl()} className="btn join-item btn-sm">
                     Today
                 </Link>{' '}
-            </MenuBar>
+            </toolBar>
 
             <WeekView days={days} user={user} />
         </div>

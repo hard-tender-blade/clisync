@@ -1,7 +1,5 @@
-'use client'
 import logOut from '@/modules/client/query/auth/logOut'
 import languageInterface, { Language } from '@/modules/client/languageInterface/language'
-import { User } from '@/modules/shared/types/mainTypes'
 import Link from 'next/link'
 import React from 'react'
 import { IoLogOut, IoPerson } from 'react-icons/io5'
@@ -10,12 +8,17 @@ import PC from '../pc'
 import PX from '../px'
 import MOB from '../mob'
 import { AiFillHome } from 'react-icons/ai'
+import { useUser } from '@/modules/client/query/user/useUser'
+import { queryClient } from '@/modules/client/queryClient'
 
-export default function Content({ lang, user }: { lang: Language; user: User | null }) {
+export default function Content({ lang }: { lang: Language }) {
     const LI = languageInterface.interfaces.navbar[lang]
 
-    const logOutHandler = async () => {
+    const { data: user, isLoading: isLoadingUser } = useUser()
+
+    const logOutHandler = async (): Promise<any> => {
         await logOut()
+        queryClient.invalidateQueries()
         window.location.reload()
     }
 
@@ -34,7 +37,10 @@ export default function Content({ lang, user }: { lang: Language; user: User | n
                             {/* right */}
                             <div>
                                 <div className="flex items-center gap-1">
-                                    {user === null && (
+                                    {isLoadingUser && (
+                                        <span className="loading loading-spinner loading-sm mr-4"></span>
+                                    )}
+                                    {!user && (
                                         <div className="flex gap-1">
                                             <Link
                                                 href="/sign-up"
@@ -50,7 +56,6 @@ export default function Content({ lang, user }: { lang: Language; user: User | n
                                             </Link>
                                         </div>
                                     )}
-
                                     {user && (
                                         <>
                                             <Link
@@ -69,17 +74,14 @@ export default function Content({ lang, user }: { lang: Language; user: User | n
                                                     className="btn m-1 rounded-full"
                                                 >
                                                     <IoMdPerson />
-                                                    <span>
-                                                        {user.name ||
-                                                            user.email.split('@')[0]}
-                                                    </span>
+                                                    <span>{user.email}</span>
                                                 </div>
                                                 <ul
                                                     tabIndex={0}
                                                     className="menu dropdown-content z-[1] mt-1 w-52 rounded-box bg-base-100 p-2 shadow"
                                                 >
                                                     <li>
-                                                        <Link href={'/profile'}>
+                                                        <Link href={'/settings'}>
                                                             <IoPerson className="w-5" />
                                                             <span>
                                                                 {LI.profile.myProfile}

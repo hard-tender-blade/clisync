@@ -2,9 +2,6 @@ import { SessionWithClient } from "./mainTypes"
 
 export interface Day {
     date: moment.Moment
-    weekday: string
-    currentMonth: boolean
-    today: boolean
     sessions: SessionWithClient[]
     googleCalendarEvents: GoogleCalendarEvent[]
 

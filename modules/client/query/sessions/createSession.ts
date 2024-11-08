@@ -1,7 +1,7 @@
-import { Client } from "../../../shared/types/mainTypes"
+import { SessionWithClient } from "@/modules/shared/types/mainTypes"
 import { CreateSessionRequest } from "../../../shared/types/subTypes"
 
-const createNewSession = async (session: CreateSessionRequest): Promise<Client | null> => {
+const createNewSession = async (session: CreateSessionRequest): Promise<SessionWithClient | null> => {
     const response = await fetch(`/api/sessions`, {
         method: 'POST',
         headers: {

@@ -28,7 +28,7 @@ export default function SessionDetail({
             <summary className="no-marker">{children}</summary>
             <div className="menu dropdown-content z-[600] flex flex-col gap-1 text-ellipsis rounded-box bg-base-100 p-4 shadow">
                 <div className="flex items-center gap-2">
-                    <Avatar id={session.client.id} s={16} />
+                    <Avatar id={session.client.id} size={16} />
                     <p className="p-bold whitespace-nowrap">{session.client.name}</p>
                 </div>
 

@@ -15,6 +15,8 @@ const config: Config = {
             colors: {
                 //* default colors
                 background_gray: '#F8F8F8',
+                gray: '#f2f2f2',
+                border_gray: '#d0d0d0',
 
                 green: '#349934',
                 blue: '#0000ff',
@@ -22,7 +24,6 @@ const config: Config = {
                 yellow: '#ffff00',
                 white: '#ffffff',
                 black: '#000000',
-                gray: '#808080',
                 gradient_start: '#007FDC',
                 gradient_end: '#27CBC2',
             },

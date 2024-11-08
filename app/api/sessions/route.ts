@@ -10,6 +10,7 @@ import googleCalendarService from '@/modules/server/services/googleCalendar/goog
 import googleRefreshTokensController from '@/modules/server/controllers/googleRefreshTokens'
 import usersController from '@/modules/server/controllers/users'
 import googleOAuth2Service from '@/modules/server/services/googleOAuth2/OAuth2Module'
+import { SessionWithClient } from '@/modules/shared/types/mainTypes'
 
 export async function POST(req: Request) {
     return errorMiddleware(async () => {
@@ -79,14 +80,12 @@ export async function POST(req: Request) {
         }, userId)
         if (!session) return responses.errors.serverError
 
-        signale.success('session ---', session)
+        const sessionWithClient: SessionWithClient = {
+            ...session,
+            client
+        }
 
-        console.log('session', session)
-        const updatedClient = await clientsController.getById(session.clientId, userId)
-        if (!updatedClient) return responses.errors.notFound
-
-        signale.success('updatedClient ---', updatedClient)
-        return responses.success(updatedClient)
+        return responses.success(sessionWithClient)
     })
 }
 export async function GET(req: NextRequest) {

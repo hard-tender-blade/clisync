@@ -1,100 +1,36 @@
 import OwnPicker from '@/app/workspace/clients/[id]/components/ownPicker/ownPicker'
 import ModalV2 from '@/modules/client/utils/modalV2/modalV2'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import Search from './components/search'
-import { Client, User } from '@/modules/shared/types/mainTypes'
+import { Client } from '@/modules/shared/types/mainTypes'
 import Avatar from '@/modules/client/utils/avatar'
 import { IoClose, IoWarningOutline } from 'react-icons/io5'
-import { showAlert } from '@/modules/client/utils/alert/alerts'
-import createNewSession from '@/modules/client/query/sessions/createSession'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { hideLoading, showLoading } from '@/modules/client/utils/loading/loadingModule'
+import { useMonthCalendar } from '../../month/context/monthCalendarContext'
 
 export default function CreateSessionModal({
-    isOpen,
     requestClose,
-    data,
 }: {
-    isOpen: boolean
     requestClose: () => void
-    data: { open: boolean; date: moment.Moment; hours: number; user: User }
 }) {
+    const { selectedDay, user, createSession } = useMonthCalendar()
+
     const [client, setClient] = useState<Client | null>(null)
+    const [start, setStart] = useState<Date>(selectedDay?.date.toDate() || new Date())
+    const [end, setEnd] = useState<Date>(selectedDay?.date.toDate() || new Date())
 
-    const [start, setStart] = useState<Date | null>(null)
-    const [end, setEnd] = useState<Date | null>(null)
+    const [addToUserGoogleCalendar, setAddToUserGoogleCalendar] = useState(false)
+    const [inviteClientOnGoogleCalendarEvent, setInviteClientOnGoogleCalendarEvent] =
+        useState(false)
+    const [note, setNote] = useState('')
 
-    const [addToUserGoogleCalendar, setAddToUserGoogleCalendar] = useState(
-        data.user.googleCalendarConnected,
-    )
+    if (!selectedDay || !user) return null
 
     //todo implement notifications for user and client
     //todo add user email check if user has it
-    const [inviteClientOnGoogleCalendarEvent, setInviteClientOnGoogleCalendarEvent] =
-        useState(data.user.googleCalendarConnected)
-    const [note, setNote] = useState('')
-
-    const router = useRouter()
-
-    useEffect(() => {
-        setStart(data.date.clone().hour(data.hours).minute(0).toDate())
-        setEnd(
-            data.date
-                .clone()
-                .hour(data.hours + 1)
-                .minute(0)
-                .toDate(),
-        )
-    }, [data])
-
-    const handleClose = () => {
-        setClient(null)
-        requestClose()
-    }
-
-    const handleCreateSession = async () => {
-        if (!client) {
-            showAlert('warning', 'short', 'Please select a client')
-            handleClose()
-            return
-        }
-        if (!start || !end) {
-            showAlert('warning', 'short', 'Please select a time')
-            handleClose()
-            return
-        }
-
-        showLoading()
-        const res = await createNewSession({
-            clientId: client.id,
-            start: start.toISOString(),
-            end: end.toISOString(),
-            timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-            addToUserGoogleCalendar: addToUserGoogleCalendar,
-            inviteClientOnGoogleCalendarEvent: inviteClientOnGoogleCalendarEvent,
-            note,
-        })
-        if (!res) {
-            showAlert(
-                'error',
-                'short',
-                'Failed to create session, contact support please',
-            )
-            handleClose()
-            hideLoading()
-            return
-        }
-        router.refresh()
-        showAlert('success', 'short', 'Session created successfully')
-        hideLoading()
-        handleClose()
-    }
-
-    if (!isOpen || !start || !end) return null
 
     return (
-        <ModalV2 requestClose={handleClose}>
+        <ModalV2 requestClose={requestClose}>
             <div className="flex flex-col gap-4">
                 <h3>Create new session</h3>
                 <div>
@@ -110,7 +46,7 @@ export default function CreateSessionModal({
                     {client ? (
                         <div className="flex w-full items-center gap-2">
                             <div className="h-hull flex items-center gap-2 py-4">
-                                <Avatar id={client.id} s={16} />
+                                <Avatar id={client.id} size={16} />
                                 <span>{client.name}</span>
                             </div>
                             <button
@@ -128,7 +64,7 @@ export default function CreateSessionModal({
                 <div>
                     <p className="p-bold">Note</p>
                     <textarea
-                        className="textarea textarea-bordered w-full"
+                        className="textarea textarea-bordered max-h-32 w-full"
                         value={note}
                         placeholder='e.g. "Client is coming with a friend"'
                         onChange={(e) => setNote(e.target.value)}
@@ -136,7 +72,7 @@ export default function CreateSessionModal({
                 </div>
 
                 <div>
-                    {!data.user.googleCalendarConnected && (
+                    {!user.googleCalendarConnected && (
                         <div className="flex items-center gap-2 py-1">
                             <IoWarningOutline color="red" />
                             <p className="text-xs text-warning">
@@ -153,7 +89,7 @@ export default function CreateSessionModal({
                     )}
                     <div
                         className={
-                            !data.user.googleCalendarConnected
+                            !user.googleCalendarConnected
                                 ? 'pointer-events-none opacity-30'
                                 : undefined
                         }
@@ -192,7 +128,17 @@ export default function CreateSessionModal({
                 </div>
 
                 <button
-                    onClick={handleCreateSession}
+                    onClick={async () => {
+                        await createSession({
+                            start,
+                            end,
+                            client: client!,
+                            addToUserGoogleCalendar,
+                            inviteClientOnGoogleCalendarEvent,
+                            note,
+                        })
+                        requestClose()
+                    }}
                     className={`btn ${client ? 'btn-primary' : 'btn-disabled'} w-full`}
                 >
                     Create session

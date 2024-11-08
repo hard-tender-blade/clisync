@@ -10,7 +10,6 @@ interface Navbar {
     signUp: string
     profile: {
         myProfile: string
-
         logOut: string
     }
 }

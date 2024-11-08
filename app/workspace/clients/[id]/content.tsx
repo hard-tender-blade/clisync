@@ -1,7 +1,6 @@
 'use client'
 import { Client } from '@/modules/shared/types/mainTypes'
 import React, { useState } from 'react'
-import WorkSpaceSideBarWrapper from '../../components/workSpaceSideBarWrapper'
 import { showAlert } from '@/modules/client/utils/alert/alerts'
 import showModal from '@/modules/client/utils/modal/modal'
 import deleteClientById from '@/modules/client/query/clients/deleteClientById'
@@ -12,6 +11,7 @@ import { Language } from '@/modules/client/languageInterface/language'
 import ClientData from './components/clientData'
 import { hideLoading, showLoading } from '@/modules/client/utils/loading/loadingModule'
 import Sessions from './components/sessions/sessions'
+import ToolBar from './components/toolBar'
 
 export default function Content({
     client: clientDefault,
@@ -74,44 +74,46 @@ export default function Content({
         return null
     }
 
+    const handleClientNoteUpdate = (note: string) => {
+        setClient({ ...client, note })
+        setUpdate(true)
+    }
+
     return (
-        <WorkSpaceSideBarWrapper currentPage="/workspace/clients">
-            <div className="flex w-full flex-col">
-                <div className="flex items-center gap-4">
-                    <h1 className="text-4xl">{client.name}</h1>
-                    {update && (
-                        <button
-                            onClick={handleSave}
-                            className="btn btn-outline btn-primary btn-sm px-4"
-                        >
-                            Save
-                        </button>
-                    )}
-                    <button
-                        className="btn btn-outline btn-error btn-sm"
-                        onClick={handleDelete}
-                    >
-                        Delete
-                    </button>
+        <div className="flex w-full flex-col">
+            <ToolBar />
+
+            <div className="flex gap-4 px-2 pt-4">
+                <div className="w-full">
+                    <h1 className="text-5xl">{client.name}</h1>
+                    <p className="tiny-text">client id: {client.id}</p>
+                    <textarea
+                        value={client.note}
+                        onChange={(e) => handleClientNoteUpdate(e.target.value)}
+                        className="textarea textarea-bordered w-full pt-4"
+                        placeholder="Note about client.."
+                    />
                 </div>
+                <div className="divider divider-horizontal"></div>
 
-                <p className="tiny-text">client: {client.id}</p>
-
-                <ClientData
-                    client={client}
-                    setClient={setClient}
-                    setUpdate={setUpdate}
-                    update={update}
-                    handleSave={handleSave}
-                    handleDelete={handleDelete}
-                />
-                <div className="divider my-6" />
-
-                <ClientAttachments client={client} setClient={setClient} />
-                <div className="divider my-6" />
-
-                <Sessions client={client} setClient={setClient} />
+                <div className="w-5/12">
+                    <ClientData
+                        client={client}
+                        setClient={setClient}
+                        setUpdate={setUpdate}
+                        update={update}
+                        handleSave={handleSave}
+                        handleDelete={handleDelete}
+                    />
+                </div>
             </div>
-        </WorkSpaceSideBarWrapper>
+
+            <div className="divider my-6" />
+
+            <ClientAttachments client={client} setClient={setClient} />
+            <div className="divider my-6" />
+
+            <Sessions client={client} setClient={setClient} />
+        </div>
     )
 }

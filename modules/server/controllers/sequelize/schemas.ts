@@ -88,6 +88,22 @@ const users = {
         type: t.STRING,
         allowNull: true,
     },
+    isPubliclyListed: {
+        type: t.BOOLEAN,
+        allowNull: false,
+    },
+    premiumPlanTo: {
+        type: t.DATE,
+        allowNull: true,
+    },
+    twoFAEnabled: {
+        type: t.BOOLEAN,
+        allowNull: false,
+    },
+    twoFASecret: {
+        type: t.STRING,
+        allowNull: true,
+    },
 }
 const services = {
     id: {

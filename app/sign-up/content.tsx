@@ -1,11 +1,8 @@
 'use client'
-import React, { Suspense, useState } from 'react'
+import React, { Suspense, useEffect, useState } from 'react'
 import Link from 'next/link'
 import languageInterface, { Language } from '@/modules/client/languageInterface/language'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { GoogleOAuthProvider } from '@react-oauth/google'
-import publicConfig from '@/modules/shared/config/publicConfig'
-import GoogleButton from './components/googleButton'
 import { showAlert } from '@/modules/client/utils/alert/alerts'
 import { validateEmail, validatePassword } from '@/modules/shared/validation/validation'
 import signUpWithEmail from '@/modules/client/query/auth/singUpWithEmail'
@@ -17,9 +14,21 @@ import PC from '../components/pc'
 import { IoMdFlower } from 'react-icons/io'
 import PX from '../components/px'
 import Separator from '../components/separator'
+import CryptoManager from '@/modules/client/utils/cryptoManager'
 
 const Element = ({ lang }: { lang: Language }) => {
     const [LI, setLI] = useState(languageInterface.interfaces.signUp[lang])
+    const [cm, setCM] = useState<CryptoManager | null>(null)
+
+    useEffect(() => {
+        const loadCm = async () => {
+            const cryptoManager = new CryptoManager()
+            await cryptoManager.initialize()
+            setCM(cryptoManager)
+        }
+
+        loadCm()
+    }, [])
 
     const router = useRouter()
     const searchParams = useSearchParams()
@@ -28,6 +37,7 @@ const Element = ({ lang }: { lang: Language }) => {
     const [email, setEmail] = useState('')
     const [password1, setPassword1] = useState('')
     const [password2, setPassword2] = useState('')
+    const [passphrase, setPassphrase] = useState('')
 
     const handleSignUpWithEmailAndPassword = async () => {
         if (password1 !== password2) {
@@ -93,6 +103,8 @@ const Element = ({ lang }: { lang: Language }) => {
         router.push(`/${event.target.value}/sign-up?${searchParams.toString()}`)
     }
 
+    if (!cm) return <div className=""></div>
+
     return (
         <div className="flex h-screen w-screen">
             <PC className="h-full w-7/12 bg-primary" />
@@ -102,10 +114,13 @@ const Element = ({ lang }: { lang: Language }) => {
                     {isEmailSent ? (
                         <>
                             <Separator size="sm" />
-                            <a className="btn btn-ghost ml-1 flex justify-center rounded-full text-xl">
+                            <Link
+                                href="/"
+                                className="btn btn-ghost ml-1 flex justify-center rounded-full text-xl"
+                            >
                                 <IoMdFlower />
                                 CliSync
-                            </a>
+                            </Link>
                             <Separator size="sm" />
                             <MdOutlineMarkEmailUnread className="h-16 w-16" />
                             <h3 className="whitespace-nowrap text-3xl font-bold">
@@ -121,10 +136,13 @@ const Element = ({ lang }: { lang: Language }) => {
                     ) : (
                         <div className="flex flex-col">
                             <Separator size="sm" />
-                            <a className="btn btn-ghost ml-1 flex justify-center rounded-full text-xl">
+                            <Link
+                                href="/"
+                                className="btn btn-ghost ml-1 flex justify-center rounded-full text-xl"
+                            >
                                 <IoMdFlower />
                                 CliSync
-                            </a>
+                            </Link>
                             <Separator size="sm" />
                             <div className="flex items-center justify-between">
                                 <h3 className="whitespace-nowrap text-3xl font-bold">
@@ -180,10 +198,38 @@ const Element = ({ lang }: { lang: Language }) => {
                                     value={password2}
                                     onChange={(e) => setPassword2(e.target.value)}
                                     className="input input-bordered w-full"
-                                    id="password-input"
+                                    id="password2-input"
                                     autoComplete="current-password"
                                 />
                             </label>
+
+                            <label className="form-control w-full">
+                                <div className="label">
+                                    <span className="label-text">
+                                        Name of your first pet (for encryption)
+                                    </span>
+                                </div>
+                                <input
+                                    type="text"
+                                    placeholder={'Buddy'}
+                                    value={passphrase}
+                                    onChange={(e) => setPassphrase(e.target.value)}
+                                    className="input input-bordered w-full"
+                                    id="passphrase-input"
+                                    autoComplete="current-password"
+                                />
+                            </label>
+                            <button
+                                onClick={async () => {
+                                    console.log(cm.checkIfKeyExists())
+                                    const edata = await cm.encryptData('Hello')
+                                    console.log(edata)
+                                    const ddata = await cm.decryptData(edata)
+                                    console.log(ddata)
+                                }}
+                            >
+                                do
+                            </button>
                             <button
                                 className="btn btn-primary mt-6"
                                 onClick={handleSignUpWithEmailAndPassword}
@@ -191,14 +237,14 @@ const Element = ({ lang }: { lang: Language }) => {
                                 {LI.root.create}
                             </button>
 
-                            <GoogleOAuthProvider
+                            {/* <GoogleOAuthProvider
                                 clientId={publicConfig.next_public_google_client_id}
                             >
                                 <GoogleButton
                                     title={'Sign up with Google'}
                                     callBack={handleSignUpWithGoogle}
                                 />
-                            </GoogleOAuthProvider>
+                            </GoogleOAuthProvider> */}
 
                             <div className="divider text-sm uppercase">{LI.root.or}</div>
 

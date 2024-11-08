@@ -5,6 +5,7 @@ import {
     IoCheckmarkCircle,
     IoInformationCircle,
 } from 'react-icons/io5'
+import './styles.css'
 
 export const showAlert = (
     type: 'success' | 'error' | 'warning' | 'info',

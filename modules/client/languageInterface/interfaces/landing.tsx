@@ -36,7 +36,7 @@ interface PricingCard {
     aboutPlan: string
     title: string
     features: string[]
-    button: string
+    button?: string
 }
 
 interface Feature {
@@ -128,29 +128,17 @@ const navbar: {
         },
         pricing: [
             {
-                plan: 'Basic Plan',
+                plan: 'Free Plan',
                 aboutPlan: 'Perfect for individuals',
-                title: 'Basic',
+                title: 'Free $0 / month',
                 features: ['1 GB Storage', 'Basic Support', 'Access to all features'],
-                button: 'Choose Basic',
             },
             {
                 plan: 'Premium Plan',
                 aboutPlan: 'Best for small teams',
-                title: 'Premium',
+                title: 'Premium $25 / month',
                 features: ['10 GB Storage', 'Priority Support', 'Custom Features'],
                 button: 'Choose Premium',
-            },
-            {
-                plan: 'Enterprise Plan',
-                aboutPlan: 'Ideal for large organizations',
-                title: 'Enterprise',
-                features: [
-                    'Unlimited Storage',
-                    '24/7 Support',
-                    'Dedicated Account Manager',
-                ],
-                button: 'Choose Enterprise',
             },
         ],
     },
@@ -262,22 +250,19 @@ const navbar: {
             {
                 plan: 'Základní plán',
                 aboutPlan: 'Perfektní pro jednotlivce',
-                title: 'Základní',
+                title: 'Zdarma $0 / měsíc',
                 features: [
-                    '1 GB úložištěúložištěúložištěúložiště',
-                    '1 GB úložiště',
                     '1 GB úložiště',
                     'Základní podpora',
                     'Přístup ke všem funkcím',
                 ],
-                button: 'Vybrat základní',
             },
             {
-                plan: 'Prémiový plán',
+                plan: 'Premium plán',
                 aboutPlan: 'Nejlepší pro malé týmy',
-                title: 'Prémiový',
+                title: 'Premium $25 / měsíc',
                 features: ['10 GB úložiště', 'Prioritní podpora', 'Vlastní funkce'],
-                button: 'Vybrat prémiový',
+                button: 'Vybrat Premium',
             },
         ],
     },

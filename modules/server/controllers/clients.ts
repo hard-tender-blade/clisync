@@ -106,8 +106,7 @@ const getClientsByUserId = async (userId: string, cursor: Cursor, search: string
 
     //prepare search 
     if (search) {
-        search = search.replaceAll(' ', '').toLocaleLowerCase()
-        where = { ...where, name: { [Op.iLike]: `%${search}%` } }
+        where = { ...where, name: { [Op.iLike]: `%${search.replaceAll(' ', '').toLocaleLowerCase()}%` } }
     }
 
     const clients = await db.clients.findAll({
